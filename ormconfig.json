@@ -1,0 +1,12 @@
+
+{
+    "type": "postgres",
+    "database": "time2sweat",
+    "username": "postgres",
+    "password": "postgres",
+    "logging": true,
+    "synchronize": true,
+    "entities": [
+        "dist/entities/*.js"
+    ]
+}

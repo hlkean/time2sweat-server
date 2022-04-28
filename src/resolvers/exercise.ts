@@ -1,18 +1,21 @@
 import { Exercise, MuscleGroup } from "../entities";
-import { ExerciseMuscleGroupInput } from "./muscleGroup";
+import { MuscleGroupInput } from "./muscleGroup";
 import { Arg, Mutation, Query, Resolver, Field, InputType } from "type-graphql";
+import { Length, Max, Min } from "class-validator";
 
 @InputType()
 class ExerciseInput {
 	@Field()
+	@Length(3, 255)
 	name: string;
 	@Field()
+	@Min(0)
+	@Max(10)
 	difficulty: number;
 }
 
 @Resolver(() => Exercise)
 export class ExerciseResolver {
-	// constructor(private muscleGroupRepository: Repository<MuscleGroup>) {}
 	@Query(() => [Exercise])
 	async exercises(): Promise<Exercise[]> {
 		return Exercise.find({ relations: ["muscleGroups"] });
@@ -25,13 +28,13 @@ export class ExerciseResolver {
 
 	@Mutation(() => Exercise)
 	async createExercise(
-		@Arg("fields") fields: ExerciseInput,
-		@Arg("muscleGroups", () => [ExerciseMuscleGroupInput])
+		@Arg("data") { name, difficulty }: ExerciseInput,
+		@Arg("muscleGroups", () => [MuscleGroupInput], { nullable: true })
 		muscleGroups: MuscleGroup[]
 	): Promise<Exercise> {
 		const exercise = new Exercise();
-		exercise.name = fields.name;
-		exercise.difficulty = fields.difficulty;
+		exercise.name = name;
+		exercise.difficulty = difficulty;
 		exercise.muscleGroups = Promise.resolve(muscleGroups);
 		await exercise.save();
 		return exercise;

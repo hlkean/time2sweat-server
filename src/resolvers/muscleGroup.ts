@@ -1,5 +1,4 @@
 import { MuscleGroup } from "../entities";
-import { MuscleName } from "../entities/MuscleGroup";
 import {
 	Arg,
 	Field,
@@ -11,18 +10,15 @@ import {
 } from "type-graphql";
 
 @InputType()
-export class ExerciseMuscleGroupInput {
+export class MuscleGroupInput {
 	@Field(() => ID)
 	id: string;
 }
 
 @InputType()
-export class MuscleGroupInput {
-	@Field(() => ID)
-	id: string;
-
+export class CreateMuscleGroupInput {
 	@Field()
-	name: MuscleName;
+	name: string;
 }
 
 @Resolver()
@@ -39,7 +35,7 @@ export class MuscleGroupResolver {
 
 	@Mutation(() => MuscleGroup)
 	async createMuscleGroup(
-		@Arg("options") options: MuscleGroupInput
+		@Arg("options") options: CreateMuscleGroupInput
 	): Promise<MuscleGroup> {
 		return MuscleGroup.create({
 			name: options.name,
